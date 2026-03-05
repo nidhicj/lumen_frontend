@@ -1,0 +1,42 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #0f0e0c;
+  color: #e8e0d0;
+  font-family: Georgia, serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app-layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(232,213,176,0.15); border-radius: 2px; }
+
+/* Input focus */
+input:focus, textarea:focus, select:focus {
+  border-color: rgba(232,213,176,0.35) !important;
+}
+
+input::placeholder, textarea::placeholder {
+  color: rgba(232,224,208,0.22);
+}
+
+/* Responsive: stack on mobile */
+@media (max-width: 640px) {
+  .app-layout { flex-direction: column; }
+}
