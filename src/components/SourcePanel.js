@@ -1,10 +1,10 @@
 import { useRef, useState } from "react";
 
 const FREE_MODELS = [
-  { id: "google/gemma-3-12b-it:free",              label: "Gemma 3 12B" },
-  { id: "meta-llama/llama-3.1-8b-instruct:free",  label: "Llama 3.1 8B" },
-  { id: "mistralai/mistral-7b-instruct:free",      label: "Mistral 7B" },
-  { id: "microsoft/phi-3-mini-128k-instruct:free", label: "Phi-3 Mini" },
+  { id: "arcee-ai/trinity-large-preview:free",            label: "Trinity Large 400B (best)" },
+  { id: "mistralai/mistral-small-3.1-24b-instruct:free",  label: "Mistral Small 3.1 24B" },
+  { id: "meta-llama/llama-3.2-3b-instruct:free",          label: "Llama 3.2 3B (fastest)" },
+  { id: "google/gemma-3-4b-it:free",                      label: "Gemma 3 4B" },
 ];
 
 export default function SourcePanel({ onIngest, loading, error, clearError, model, setModel }) {
