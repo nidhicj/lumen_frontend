@@ -1,4 +1,4 @@
-const BASE = process.env.REACT_APP_API_URL || "";
+const BASE = process.env.REACT_APP_API_URL || "https://lumenbackend-production-9c9c.up.railway.app";
 
 export async function ingestURL(sessionId, url) {
   const res = await fetch(`${BASE}/api/ingest/`, {
