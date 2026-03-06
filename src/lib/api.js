@@ -13,6 +13,19 @@ export async function ingestURL(sessionId, url) {
   return res.json();
 }
 
+export async function ingestDriveFolder(sessionId, folderUrl) {
+  const res = await fetch(`${BASE}/api/drive/`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ session_id: sessionId, folder_url: folderUrl }),
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.detail || "Drive folder ingest failed");
+  }
+  return res.json();
+}
+
 export async function ingestPDF(sessionId, file) {
   const b64 = await fileToBase64(file);
   const res = await fetch(`${BASE}/api/ingest/`, {

@@ -19,7 +19,26 @@ export function useSession() {
     setLoadMsg(type === "url" ? `Fetching ${payload.url}…` : `Reading ${payload.file?.name || "document"}…`);
     try {
       let result;
-      if (type === "url")  result = await ingestURL(sessionId, payload.url);
+      if (type === "url") {
+        const isDriveFolder = payload.url.includes("drive.google.com/drive/folders") ||
+                              payload.url.includes("drive.google.com/open");
+        if (isDriveFolder) {
+          setLoadMsg("Connecting to Google Drive folder…");
+          result = await ingestDriveFolder(sessionId, payload.url);
+          // Drive returns multiple files — build a richer success message
+          addMessage("assistant",
+            `✓ Google Drive folder indexed — **${result.files_ingested} files**, **${result.total_chunks} chunks** ready.\n\n` +
+            `Files: ${result.ingested.map(f => `\`${f.file}\``).join(", ")}` +
+            (result.errors.length ? `\n\n⚠ Skipped ${result.errors.length} file(s): ${result.errors.map(e => e.file).join(", ")}` : "") +
+            `\n\nAsk me anything across all these documents.`,
+            []
+          );
+          setSources(prev => [...prev, ...result.ingested.map(f => f.file)]);
+          return; // early return, message already added
+        } else {
+          result = await ingestURL(sessionId, payload.url);
+        }
+      }
       if (type === "pdf")  result = await ingestPDF(sessionId, payload.file);
       if (type === "text") result = await ingestText(sessionId, payload.text, payload.filename);
 
