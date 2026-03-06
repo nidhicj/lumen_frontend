@@ -6,11 +6,21 @@ export async function ingestURL(sessionId, url) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ session_id: sessionId, source_type: "url", url }),
   });
-  if (!res.ok) {
-    const err = await res.json();
-    throw new Error(err.detail || "Ingest failed");
+  // if (!res.ok) {
+  //   const err = await res.json();
+  //   throw new Error(err.detail || "Ingest failed");
+  // }
+  // return res.json();
+  const text = await res.text(); // read raw text first
+  if (!text) throw new Error(`Empty response from server (status ${res.status}). PDF may be too large or request timed out.`);
+  
+  try {
+    const data = JSON.parse(text);
+    if (!res.ok) throw new Error(data.detail || "Ingest failed");
+    return data;
+  } catch (e) {
+    throw new Error(`Server response was not valid JSON: ${text.slice(0, 200)}`);
   }
-  return res.json();
 }
 
 export async function ingestDriveFolder(sessionId, folderUrl) {
@@ -19,12 +29,24 @@ export async function ingestDriveFolder(sessionId, folderUrl) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ session_id: sessionId, folder_url: folderUrl }),
   });
-  if (!res.ok) {
-    const err = await res.json();
-    throw new Error(err.detail || "Drive folder ingest failed");
+  // if (!res.ok) {
+  //   const err = await res.json();
+  //   throw new Error(err.detail || "Drive folder ingest failed");
+  // }
+  // return res.json();
+
+  const text = await res.text(); // read raw text first
+  if (!text) throw new Error(`Empty response from server (status ${res.status}). PDF may be too large or request timed out.`);
+  
+  try {
+    const data = JSON.parse(text);
+    if (!res.ok) throw new Error(data.detail || "Drive folder ingest failed");
+    return data;
+  } catch (e) {
+    throw new Error(`Server response was not valid JSON: ${text.slice(0, 200)}`);
   }
-  return res.json();
 }
+
 
 export async function ingestPDF(sessionId, file) {
   const b64 = await fileToBase64(file);
@@ -38,11 +60,16 @@ export async function ingestPDF(sessionId, file) {
       filename: file.name,
     }),
   });
-  if (!res.ok) {
-    const err = await res.json();
-    throw new Error(err.detail || "PDF ingest failed");
+  const text = await res.text(); // read raw text first
+  if (!text) throw new Error(`Empty response from server (status ${res.status}). PDF may be too large or request timed out.`);
+  
+  try {
+    const data = JSON.parse(text);
+    if (!res.ok) throw new Error(data.detail || "Ingest failed");
+    return data;
+  } catch (e) {
+    throw new Error(`Server response was not valid JSON: ${text.slice(0, 200)}`);
   }
-  return res.json();
 }
 
 export async function ingestText(sessionId, text, filename = "pasted.txt") {
@@ -51,11 +78,23 @@ export async function ingestText(sessionId, text, filename = "pasted.txt") {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ session_id: sessionId, source_type: "text", content: text, filename }),
   });
-  if (!res.ok) {
-    const err = await res.json();
-    throw new Error(err.detail || "Text ingest failed");
+  // if (!res.ok) {
+  //   const err = await res.json();
+  //   throw new Error(err.detail || "Text ingest failed");
+  // }
+  // return res.json();
+
+  const text = await res.text(); // read raw text first
+  if (!text) throw new Error(`Empty response from server (status ${res.status}). PDF may be too large or request timed out.`);
+  
+  try {
+    const data = JSON.parse(text);
+    if (!res.ok) throw new Error(data.detail || "Text ingest failed");
+    return data;
+  } catch (e) {
+    throw new Error(`Server response was not valid JSON: ${text.slice(0, 200)}`);
   }
-  return res.json();
+
 }
 
 export async function sendChat(sessionId, question, model) {
