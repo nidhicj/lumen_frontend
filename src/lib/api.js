@@ -84,15 +84,15 @@ export async function ingestText(sessionId, text, filename = "pasted.txt") {
   // }
   // return res.json();
 
-  const text = await res.text(); // read raw text first
-  if (!text) throw new Error(`Empty response from server (status ${res.status}). PDF may be too large or request timed out.`);
+  const text_ = await res.text(); // read raw text first
+  if (!text_) throw new Error(`Empty response from server (status ${res.status}). PDF may be too large or request timed out.`);
   
   try {
-    const data = JSON.parse(text);
+    const data = JSON.parse(text_);
     if (!res.ok) throw new Error(data.detail || "Text ingest failed");
     return data;
   } catch (e) {
-    throw new Error(`Server response was not valid JSON: ${text.slice(0, 200)}`);
+    throw new Error(`Server response was not valid JSON: ${text_.slice(0, 200)}`);
   }
 
 }
