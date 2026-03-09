@@ -39,7 +39,7 @@ export function useSession() {
         addMessage("assistant",
           `✓ Google Drive folder indexed.\n\n` +
           `**${result.files_ingested} files · ${result.total_chunks} chunks total**\n\n` +
-          `- ${fileList}` +
+          // `- ${fileList}` +
           errorNote +
           `\n\nAll documents are now your corpora — ask me anything across all of them.`,
           []
