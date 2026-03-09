@@ -15,8 +15,11 @@ export function useSession() {
   const [loadMsg, setLoadMsg]   = useState("");
   const [error, setError]       = useState("");
 
-  const addMessage = (role, content, sources = []) =>
-    setMessages(prev => [...prev, { role, content, sources, id: uuid() }]);
+  // const addMessage = (role, content, sources = []) =>
+  //   setMessages(prev => [...prev, { role, content, sources, id: uuid() }]);
+  const addMessage = (role, content, sources = [], model_used = null, requestedModel = null) =>
+    setMessages(prev => [...prev, { role, content, sources, model_used, requestedModel, id: uuid() }]);
+ 
 
   const handleIngest = useCallback(async (type, payload) => {
     setLoading(true);
@@ -99,7 +102,8 @@ export function useSession() {
     setError("");
     try {
       const data = await sendChat(sessionId, question, model);
-      addMessage("assistant", data.answer, data.sources);
+      // addMessage("assistant", data.answer, data.sources);
+      addMessage("assistant", data.answer, data.sources, data.model_used, model);
     } catch (e) {
       setError(e.message);
       addMessage("assistant", `⚠️ ${e.message}`, []);

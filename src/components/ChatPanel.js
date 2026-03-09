@@ -1,5 +1,13 @@
 import { useRef, useEffect, useState } from "react";
 
+// Add this helper at the top of the file
+const MODEL_LABELS = {
+  "meta-llama/llama-3.2-3b-instruct:free":          "Llama 3.2 3B",
+  "google/gemma-3-4b-it:free":                       "Gemma 3 4B",
+  "mistralai/mistral-small-3.1-24b-instruct:free":   "Mistral Small",
+  "arcee-ai/trinity-large-preview:free":             "Trinity 400B",
+};
+
 function renderMarkdown(text) {
   return text
     .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
@@ -78,6 +86,30 @@ export default function ChatPanel({ messages, sources, loading, loadMsg, onSend,
                         [{s.index}] {s.source_name.length > 30 ? s.source_name.slice(0,28)+"…" : s.source_name}
                       </span>
                     ))}
+                  </div>
+                )}
+                {/* Model badge */}
+                {m.model_used && (
+                  <div style={{
+                    marginTop: "0.4rem",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.35rem"
+                  }}>
+                    <span style={{
+                      fontFamily: "monospace",
+                      fontSize: 10,
+                      color: m.model_used !== m.requestedModel
+                        ? "rgba(255,180,80,0.7)"   // amber if fallback
+                        : "rgba(232,213,176,0.3)", // dim if expected
+                      background: "rgba(255,255,255,0.04)",
+                      border: "1px solid rgba(255,255,255,0.08)",
+                      borderRadius: 4,
+                      padding: "2px 7px",
+                    }}>
+                      ✦ {MODEL_LABELS[m.model_used] || m.model_used}
+                      {m.model_used !== m.requestedModel && " (fallback)"}
+                    </span>
                   </div>
                 )}
               </div>
