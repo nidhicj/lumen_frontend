@@ -1,6 +1,5 @@
 import { useRef, useEffect, useState } from "react";
 
-// Add this helper at the top of the file
 const MODEL_LABELS = {
   "meta-llama/llama-3.2-3b-instruct:free":          "Llama 3.2 3B",
   "google/gemma-3-4b-it:free":                       "Gemma 3 4B",
@@ -31,7 +30,7 @@ const Spinner = () => (
 
 export default function ChatPanel({ messages, sources, loading, loadMsg, onSend, model }) {
   const [input, setInput] = useState("");
-  const endRef  = useRef();
+  const endRef   = useRef();
   const inputRef = useRef();
 
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, loading]);
@@ -79,29 +78,41 @@ export default function ChatPanel({ messages, sources, loading, loadMsg, onSend,
                   <p style={{ margin: 0 }}
                     dangerouslySetInnerHTML={{ __html: renderMarkdown(m.content) }} />
                 </div>
+
+                {/* Citation chips — clickable if source_url exists */}
                 {m.sources?.length > 0 && (
                   <div style={styles.chips}>
-                    {m.sources.map((s, i) => (
-                      <span key={i} style={styles.chip} title={s.snippet}>
-                        [{s.index}] {s.source_name.length > 30 ? s.source_name.slice(0,28)+"…" : s.source_name}
-                      </span>
-                    ))}
+                    {m.sources.map((s, i) => {
+                      const label = `[${s.index}] ${s.source_name.length > 30 ? s.source_name.slice(0, 28) + "…" : s.source_name}`;
+                      return s.source_url ? (
+                        <a
+                          key={i}
+                          href={s.source_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title={s.snippet}
+                          style={styles.chipLink}
+                        >
+                          {label} ↗
+                        </a>
+                      ) : (
+                        <span key={i} style={styles.chip} title={s.snippet}>
+                          {label}
+                        </span>
+                      );
+                    })}
                   </div>
                 )}
-                {/* Model badge */}
+
+                {/* Model badge — amber if fallback, dim if expected */}
                 {m.model_used && (
-                  <div style={{
-                    marginTop: "0.4rem",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.35rem"
-                  }}>
+                  <div style={{ marginTop: "0.4rem", display: "flex", alignItems: "center", gap: "0.35rem" }}>
                     <span style={{
                       fontFamily: "monospace",
                       fontSize: 10,
                       color: m.model_used !== m.requestedModel
-                        ? "rgba(255,180,80,0.7)"   // amber if fallback
-                        : "rgba(232,213,176,0.3)", // dim if expected
+                        ? "rgba(255,180,80,0.7)"
+                        : "rgba(232,213,176,0.3)",
                       background: "rgba(255,255,255,0.04)",
                       border: "1px solid rgba(255,255,255,0.08)",
                       borderRadius: 4,
@@ -214,6 +225,16 @@ const styles = {
     fontSize: 10, color: "rgba(232,213,176,0.38)",
     fontFamily: "monospace", cursor: "default",
     maxWidth: 220, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+  },
+  chipLink: {
+    background: "rgba(232,213,176,0.07)",
+    border: "1px solid rgba(232,213,176,0.28)",
+    borderRadius: 5, padding: "2px 8px",
+    fontSize: 10, color: "rgba(232,213,176,0.65)",
+    fontFamily: "monospace", cursor: "pointer",
+    maxWidth: 240, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+    textDecoration: "none",
+    transition: "all 0.15s",
   },
   thinking: {
     display: "flex", alignItems: "center", gap: "0.6rem",
